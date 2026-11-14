@@ -1,9 +1,5 @@
 .tools/
-.env
-.env.local
-**/.env
 **/.env.local
-**/.env.*
 !**/.env.example
 **/node_modules/
 **/.next/
@@ -18,3 +14,4 @@
 artifacts/
 *.log
 .DS_Store
+config.bat

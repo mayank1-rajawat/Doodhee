@@ -35,7 +35,7 @@ backend:
 admin:
 	cd admin-web && npm run dev
 mobile:
-	cd mobile-app && $(FLUTTER) run --dart-define=PUBLIC_API_URL=$${PUBLIC_API_URL:-http://10.0.2.2:18080}
+	cd mobile-app && $(FLUTTER) run --dart-define=PUBLIC_API_URL=$${PUBLIC_API_URL:-http://10.0.2.2:18080} --dart-define="BUILD_LABEL=$${BUILD_LABEL:-Local}"
 contracts:
 	cd backend && $(GO) run ./cmd/contracts
 	node scripts/generate-clients.mjs
@@ -55,7 +55,7 @@ build:
 android-share:
 	@test -n "$$PUBLIC_API_URL" || (echo 'Set PUBLIC_API_URL to a backend reachable from the phone. See docs/PHONE_TESTING.md.'; exit 1)
 	mkdir -p artifacts/android/symbols
-	cd mobile-app && $(FLUTTER) build apk --release --split-per-abi --target-platform android-arm,android-arm64 --split-debug-info=$(ROOT)/artifacts/android/symbols -PlocalTestSigning=true -PallowLocalHttp=true -PcompactNativeLibraries=true --dart-define=PUBLIC_API_URL=$$PUBLIC_API_URL --dart-define="BUILD_LABEL=$${BUILD_LABEL:-Testing build}"
+	cd mobile-app && $(FLUTTER) build apk --release --split-per-abi --target-platform android-arm,android-arm64 --split-debug-info=$(ROOT)/artifacts/android/symbols -PlocalTestSigning=true -PallowLocalHttp=true -PcompactNativeLibraries=true --dart-define=PUBLIC_API_URL=$$PUBLIC_API_URL --dart-define="BUILD_LABEL=$${BUILD_LABEL:-Doodhee}"
 	cp mobile-app/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk artifacts/android/doodhee-arm64-testing.apk
 	cp mobile-app/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk artifacts/android/doodhee-arm32-testing.apk
 	cp mobile-app/build/app/outputs/mapping/release/mapping.txt artifacts/android/symbols/android-r8-mapping.txt
