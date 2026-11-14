@@ -27,6 +27,12 @@ func main() {
 		panic(e)
 	}
 	defer tx.Rollback(ctx)
+	// Public gateway, admin gateway, and worker may start together during a
+	// deployment. Serialize their migration checks so only one instance applies
+	// a schema version while the others wait for the committed result.
+	if _, e = tx.Exec(ctx, "SELECT pg_advisory_xact_lock(1846468943)"); e != nil {
+		panic(e)
+	}
 	if _, e = tx.Exec(ctx, `CREATE TABLE IF NOT EXISTS schema_migrations (
 		version text PRIMARY KEY,
 		applied_at timestamptz NOT NULL DEFAULT now()

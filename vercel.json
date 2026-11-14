@@ -1,0 +1,56 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "admin-web": {
+      "root": "admin-web/",
+      "framework": "nextjs",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "admin-gateway",
+          "format": "url",
+          "env": "ADMIN_GATEWAY_URL"
+        }
+      ]
+    },
+    "public-gateway": {
+      "root": "backend/",
+      "runtime": "container",
+      "entrypoint": "Dockerfile.public"
+    },
+    "admin-gateway": {
+      "root": "backend/",
+      "runtime": "container",
+      "entrypoint": "Dockerfile.admin"
+    }
+  },
+  "daemons": {
+    "event-worker": {
+      "root": "backend/",
+      "entrypoint": "Dockerfile.worker",
+      "instances": {
+        "bom1": 1
+      }
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/v1/(.*)",
+      "destination": {
+        "service": "public-gateway"
+      }
+    },
+    {
+      "source": "/health/(.*)",
+      "destination": {
+        "service": "public-gateway"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "admin-web"
+      }
+    }
+  ]
+}
